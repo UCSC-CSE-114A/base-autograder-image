@@ -1,0 +1,20 @@
+# Custom stack.yaml for caching shared dependencies across assignments 00 to 05.
+resolver: lts-21.14
+
+packages:
+  - ./dummy-package
+
+extra-deps:
+  - clock-0.8.4
+  - dequeue-0.1.12   # Specific to 00-lambda.
+  - elsa-0.2.2.0     # Specific to 00-lambda.
+  - megaparsec-9.3.1 # Specific to 05-types.
+
+docker:
+    enable: true
+
+system-ghc: false
+
+flags: {}
+
+extra-package-dbs: []
