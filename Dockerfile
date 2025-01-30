@@ -38,7 +38,7 @@ USER grader
 RUN mkdir ~/.ghcup
 RUN mkdir ~/.ghcup/bin
 
-RUN curl -o ~/ghcup https://downloads.haskell.org/~ghcup/x86_64-linux-ghcup && \
+RUN curl -o ~/ghcup https://downloads.haskell.org/~ghcup/$(uname -m)-linux-ghcup && \
     chmod +x ~/ghcup && \
     mv ~/ghcup ~/.ghcup/bin/
 
