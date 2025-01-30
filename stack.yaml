@@ -11,9 +11,9 @@ extra-deps:
   - megaparsec-9.3.1 # Specific to 05-types.
 
 docker:
-    enable: true
+    enable: false
 
-system-ghc: false
+system-ghc: true
 
 flags: {}
 
