@@ -38,15 +38,22 @@ RUN chown -R grader:grader /home/grader
 
 USER grader
 
-RUN ls -la /home/grader
-RUN echo $HOME
+RUN mkdir /home/grader/.ghcup
+RUN mkdir /home/grader/.ghcup/bin
 
-ENV GHCUP_INSTALL_BASE_PREFIX=/home/grader
-ENV BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+RUN curl -o /home/grader/ghcup https://downloads.haskell.org/~ghcup/x86_64-linux-ghcup && \
+    chmod +x /home/grader/ghcup && \
+    mv /home/grader/ghcup /home/grader/.ghcup/bin/
+
+RUN gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 7D1E8AFD1D4A16D71FADA2F2CCC85C0E40C06A8C
+    # gpg --batch --keyserver keyserver.ubuntu.com --recv-keys FE5AB6C91FEA597C3B31180B73EDE9E8CFBAEF01 && \
+    # gpg --batch --keyserver keyserver.ubuntu.com --recv-keys 88B57FCF7DB53B4DB3BFA4B1588764FBE22D19C4 && \
+    # gpg --batch --keyserver keyserver.ubuntu.com --recv-keys EAF2A9A722C0C96F2B431CA511AAD8CEDEE0CAEF
+
 ENV PATH="/home/grader/.ghcup/bin:$PATH"
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh -s -- -y && \
-  echo "source /home/grader/.ghcup/env" >> /home/grader/.bashrc
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh -s -- -y && \
+#   echo "source /home/grader/.ghcup/env" >> /home/grader/.bashrc
 
 # [Choice] GHC version: recommended, latest, 9.2, 9.0, 8.10, 8.8, 8.6
 ARG GHC_VERSION=9.4.7
