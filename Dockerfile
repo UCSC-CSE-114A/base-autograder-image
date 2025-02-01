@@ -1,14 +1,6 @@
-FROM ubuntu:22.04
+FROM edulinq/grader.base-ubuntu22.04:0.0.4
 
 RUN apt-get update
-
-RUN apt-get install -y \
-    locales \
-    tzdata
-
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
-RUN locale-gen
 
 RUN apt-get install -y \
     build-essential \
