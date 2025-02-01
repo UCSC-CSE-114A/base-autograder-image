@@ -15,6 +15,8 @@ RUN apt-get install -y \
 
 RUN apt-get clean
 
+RUN mkdir -p /autograder/input
+
 RUN useradd --create-home --shell /bin/bash grader
 
 WORKDIR /home/grader
