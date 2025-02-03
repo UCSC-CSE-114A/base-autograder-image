@@ -26,6 +26,7 @@ COPY stack.yaml /home/grader/stack.yaml
 COPY dummy-package /home/grader/dummy-package/
 
 RUN chown -R grader:grader /home/grader
+RUN chown -R grader:grader /autograder
 
 USER grader
 
