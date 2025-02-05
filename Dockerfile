@@ -1,4 +1,4 @@
-FROM edulinq/grader.base-ubuntu22.04:0.0.4
+FROM edulinq/autograder.python:0.0.3
 
 RUN apt-get update
 
@@ -15,11 +15,6 @@ RUN apt-get install -y \
 
 RUN apt-get clean
 
-RUN mkdir -p /autograder/input
-# Ensure the directories that the student submission code will move into is created.
-# This step allows the `chown` command to properly set permissions.
-RUN mkdir -p /autograder/work/00-lambda/tests
-
 RUN useradd --create-home --shell /bin/bash grader
 
 WORKDIR /home/grader
@@ -30,6 +25,7 @@ COPY dummy-package /home/grader/dummy-package/
 
 RUN chown -R grader:grader /home/grader
 RUN chown -R grader:grader /autograder
+RUN usermod -aG sudo grader
 
 USER grader
 
