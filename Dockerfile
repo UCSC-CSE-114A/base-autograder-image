@@ -15,13 +15,11 @@ RUN apt-get install -y \
 
 RUN apt-get clean
 
-# Run everything as root to avoid file permission issues during grading.
-WORKDIR /root
+WORKDIR /autograder/work
 
 # Add custom stack.yaml for shared dependencies.
-COPY stack.yaml /root/stack.yaml
-COPY stack.yaml /root/.stack/global-project/stack.yaml
-COPY dummy-package /root/dummy-package/
+COPY stack.yaml /autograder/work/stack.yaml
+COPY dummy-package /autograder/work/dummy-package/
 
 RUN mkdir ~/.ghcup
 RUN mkdir ~/.ghcup/bin
