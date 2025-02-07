@@ -1,4 +1,6 @@
-FROM edulinq/autograder.python:0.0.3
+# We use the official edulinq python grader for Ubuntu.
+# https://github.com/edulinq/autograder-docker/blob/0.0.4/10-python/ubuntu/Dockerfile
+FROM edulinq/grader.python-ubuntu22.04:0.0.4
 
 RUN apt-get update
 
@@ -12,8 +14,6 @@ RUN apt-get install -y \
     libncurses-dev \
     libncurses5 \
     libtinfo5
-
-RUN apt-get clean
 
 WORKDIR /autograder/work
 
@@ -33,7 +33,6 @@ RUN echo "PATH=\"/root/.ghcup/bin:$PATH\"" >> .bashrc
 
 ENV PATH="/root/.local/bin:/root/.ghcup/bin:$PATH"
 
-# [Choice] GHC version: recommended, latest, 9.2, 9.0, 8.10, 8.8, 8.6
 ARG GHC_VERSION=9.4.7
 ARG STACK_RESOLVER=lts-21.14
 
