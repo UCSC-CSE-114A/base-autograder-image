@@ -2,9 +2,9 @@
 # https://github.com/edulinq/autograder-docker/blob/0.0.4/10-python/ubuntu/Dockerfile
 FROM ghcr.io/edulinq/grader.python:0.1.0.0-ubuntu22.04
 
-RUN apt-get update
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get upgrade -y
+RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y \
     build-essential \
