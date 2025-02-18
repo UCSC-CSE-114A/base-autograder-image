@@ -4,6 +4,7 @@ FROM ghcr.io/edulinq/grader.python:0.1.0.0-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN apt-get --reinstall install libc-bin
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y \
