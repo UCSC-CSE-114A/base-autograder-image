@@ -21,8 +21,7 @@ WORKDIR /autograder/work
 COPY stack.yaml /autograder/work/stack.yaml
 COPY dummy-package /autograder/work/dummy-package/
 
-RUN mkdir ~/.ghcup
-RUN mkdir ~/.ghcup/bin
+RUN mkdir -p ~/.ghcup/bin
 
 RUN curl -o ~/ghcup https://downloads.haskell.org/~ghcup/$(uname -m)-linux-ghcup && \
     chmod +x ~/ghcup && \
@@ -41,7 +40,13 @@ RUN ghcup install ghc "${GHC_VERSION}" --set \
     && ghcup install stack recommended --set \
     && cabal update
 
+ENV STACK_ROOT=/root/.stack
+
 # Install GHC for the stack.yaml resolver.
 RUN stack config set system-ghc --global true
-RUN stack install --resolver=${STACK_RESOLVER}
+RUN stack build --resolver=${STACK_RESOLVER} --only-dependencies
+
+RUN echo "PATH=\"/root/.cabal/store/bin:$PATH\"" >> .bashrc
+ENV PATH="/root/.cabal/store/bin:$PATH"
+
 RUN stack build
