@@ -4,6 +4,8 @@ FROM ghcr.io/edulinq/grader.python:0.1.0.0-ubuntu22.04
 
 RUN apt-get update
 
+RUN apt-get install -y apt-utils
+
 RUN apt-get install -y \
     build-essential \
     curl \
