@@ -32,18 +32,13 @@ RUN curl -o ~/ghcup https://downloads.haskell.org/~ghcup/$(uname -m)-linux-ghcup
 RUN chmod +x ~/ghcup
 RUN mv ~/ghcup ~/.ghcup/bin/
 
-# TODO: One-line for paths and ENVs
-RUN echo "PATH=\$HOME/.local/bin:\$PATH" >> .bashrc
-RUN echo "PATH=\$HOME/.ghcup/bin:\$PATH" >> .bashrc
-RUN echo "PATH=\$HOME/.cabal/store/bin:\$PATH" >> .bashrc
+RUN echo "PATH=\$HOME/.local/bin:\$HOME/.ghcup/bin:\$HOME/.cabal/store/bin:\$PATH" >> $HOME/.bashrc
+ENV PATH="$HOME/.local/bin:$HOME/.ghcup/bin:$HOME/.cabal/store/bin:$PATH"
 
-ENV PATH="$HOME/.local/bin:$HOME/.ghcup/bin:$PATH"
-ENV PATH="$HOME/.cabal/store/bin:$PATH"
-
-RUN ghcup install ghc "${GHC_VERSION}" --set \
-    && ghcup install cabal recommended --set \
-    && ghcup install stack recommended --set \
-    && cabal update
+RUN ghcup install ghc "${GHC_VERSION}" --set
+RUN ghcup install cabal recommended --set
+RUN ghcup install stack recommended --set
+RUN cabal update
 
 ENV STACK_ROOT=/root/.stack
 
