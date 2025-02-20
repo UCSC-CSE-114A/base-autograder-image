@@ -1,6 +1,11 @@
 # We use the official edulinq python grader for Ubuntu.
-# https://github.com/edulinq/autograder-docker/blob/0.0.4/10-python/ubuntu/Dockerfile
-FROM ghcr.io/edulinq/grader.python:0.1.0.0-ubuntu22.04
+# https://github.com/edulinq/autograder-docker-python/blob/0.1.0.1/ubuntu/Dockerfile
+FROM ghcr.io/edulinq/grader.python:0.1.0.1-ubuntu22.04
+
+ARG GHC_VERSION=9.4.7
+ARG STACK_RESOLVER=lts-21.14
+
+ENV HOME="/root"
 
 RUN apt-get update
 
@@ -23,17 +28,17 @@ COPY dummy-package /autograder/work/dummy-package/
 
 RUN mkdir -p ~/.ghcup/bin
 
-RUN curl -o ~/ghcup https://downloads.haskell.org/~ghcup/$(uname -m)-linux-ghcup && \
-    chmod +x ~/ghcup && \
-    mv ~/ghcup ~/.ghcup/bin/
+RUN curl -o ~/ghcup https://downloads.haskell.org/~ghcup/$(uname -m)-linux-ghcup
+RUN chmod +x ~/ghcup
+RUN mv ~/ghcup ~/.ghcup/bin/
 
-RUN echo "PATH=\"/root/.local/bin:$PATH\"" >> .bashrc
-RUN echo "PATH=\"/root/.ghcup/bin:$PATH\"" >> .bashrc
+# TODO: One-line for paths and ENVs
+RUN echo "PATH=\$HOME/.local/bin:\$PATH" >> .bashrc
+RUN echo "PATH=\$HOME/.ghcup/bin:\$PATH" >> .bashrc
+RUN echo "PATH=\$HOME/.cabal/store/bin:\$PATH" >> .bashrc
 
-ENV PATH="/root/.local/bin:/root/.ghcup/bin:$PATH"
-
-ARG GHC_VERSION=9.4.7
-ARG STACK_RESOLVER=lts-21.14
+ENV PATH="$HOME/.local/bin:$HOME/.ghcup/bin:$PATH"
+ENV PATH="$HOME/.cabal/store/bin:$PATH"
 
 RUN ghcup install ghc "${GHC_VERSION}" --set \
     && ghcup install cabal recommended --set \
@@ -46,7 +51,5 @@ ENV STACK_ROOT=/root/.stack
 RUN stack config set system-ghc --global true
 RUN stack build --resolver=${STACK_RESOLVER} --only-dependencies
 
-RUN echo "PATH=\"/root/.cabal/store/bin:$PATH\"" >> .bashrc
-ENV PATH="/root/.cabal/store/bin:$PATH"
 
 RUN stack build
