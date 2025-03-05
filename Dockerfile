@@ -1,6 +1,6 @@
 # We use the official edulinq python grader for Ubuntu.
 # https://github.com/edulinq/autograder-docker-python/blob/0.1.0.1/ubuntu/Dockerfile
-FROM ghcr.io/edulinq/grader.python:0.1.0.1-ubuntu22.04
+FROM ghcr.io/edulinq/grader.python:0.1.0.2-ubuntu22.04
 
 ARG GHC_VERSION=9.4.7
 ARG STACK_RESOLVER=lts-21.14
