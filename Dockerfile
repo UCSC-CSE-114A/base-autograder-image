@@ -2,8 +2,8 @@
 # https://github.com/edulinq/autograder-docker-python/blob/0.1.0.1/ubuntu/Dockerfile
 FROM ghcr.io/edulinq/grader.python:0.1.0.2-ubuntu22.04
 
-ARG GHC_VERSION=9.8.4
-ARG STACK_RESOLVER=lts-23.11
+ARG GHC_VERSION=9.4.7
+ARG STACK_RESOLVER=lts-21.14
 
 ENV HOME="/root"
 
@@ -45,6 +45,6 @@ ENV STACK_ROOT=/root/.stack
 
 # Install GHC for the stack.yaml resolver.
 RUN stack config set system-ghc --global true
-RUN stack build --resolver=${STACK_RESOLVER} --only-dependencies
+RUN stack build --resolver=${STACK_RESOLVER} --only-dependencies --jobs=1
 
-RUN stack build
+RUN stack build --jobs=1
