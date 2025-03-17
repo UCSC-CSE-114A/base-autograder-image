@@ -7,9 +7,9 @@ version:             0.1.0.0
 homepage:            https://github.com/githubuser/dummy-package#readme
 license:             BSD-3-Clause
 license-file:        LICENSE
-author:              Author name here
-maintainer:          example@example.com
-copyright:           2025 Author name here
+author:              Lucas Ellenberger
+maintainer:          lmellenb@ucsc.edu
+copyright:           2025 Lucas Ellenberger
 category:            Web
 build-type:          Simple
 extra-source-files:  README.md
