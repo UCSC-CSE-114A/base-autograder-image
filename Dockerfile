@@ -10,16 +10,15 @@ ENV HOME="/root"
 RUN apk update
 
 RUN apk add --no-cache \
-    build-essential \
+    build-base \
     curl \
     libffi-dev \
-    libffi8ubuntu1 \
-    libgmp-dev \
-    libgmp10 \
-    libncurses-dev \
-    libncurses5 \
-    libtinfo5 \
-    zlib1g-dev
+    libffi \
+    gmp-dev \
+    gmp \
+    ncurses \
+    ncurses-dev \
+    zlib-dev
 
 WORKDIR /autograder/work
 
@@ -50,7 +49,22 @@ RUN stack build --resolver=${STACK_RESOLVER} --only-dependencies --jobs=1
 RUN stack build --jobs=1
 
 # Remove unnecessary build artifacts.
+RUN mkdir -p /tmp/.ghcup/bin
+RUN mkdir -p /tmp/.ghcup/ghc
+
+RUN cp -r /root/.ghcup/bin/stack /tmp/.ghcup/bin/
+RUN cp -r /root/.ghcup/ghc/9.4.7 /tmp/.ghcup/ghc/9.4.7
+
 RUN rm -rf /root/.ghcup
+
+RUN mkdir -p /root/.ghcup/bin/stack
+RUN mkdir -p /root/.ghcup/ghc
+
+RUN cp -r /tmp/.ghcup/bin/stack /root/.ghcup/bin/stack
+RUN cp -r /tmp/.ghcup/ghc/9.4.7 /root/.ghcup/ghc/9.4.7
+
+RUN rm -rf /tmp/.ghcup
+
 RUN rm -rf \
     /root/.stack/programs \
     /root/.stack/setup-exe-cache \
@@ -65,24 +79,23 @@ FROM ghcr.io/edulinq/grader.python:0.1.0.2-alpine3.20.3 AS final-stage
 RUN apk update
 
 RUN apk add --no-cache \
-    libffi8 \
-    libgmp10 \
-    libncurses5 \
-    libtinfo5 \
-    zlib1g
+    libffi \
+    gmp \
+    ncurses \
+    zlib
 
-RUN apk clean
-RUN rm -rf /var/lib/apt/lists/*
-
-# COPY --from=build-stage /root/.ghcup /root/.ghcup
-# COPY --from=build-stage /root/.cabal /root/.cabal
-COPY --from=build-stage /root/.stack /root/.stack
-COPY --from=build-stage /autograder/work/.stack-work/install /autograder/work/.stack-work/install
+COPY --from=build-stage / /
 
 ENV HOME="/root"
 ENV STACK_ROOT=/root/.stack
 
-RUN echo "PATH=\$HOME/.local/bin:$PATH" >> $HOME/.bashrc
-ENV PATH="$HOME/.local/bin:$PATH"
+RUN echo "PATH=\$HOME/.local/bin:\$HOME/.ghcup/bin:\$HOME/.cabal/store/bin:\$PATH" >> $HOME/.bashrc
+ENV PATH="$HOME/.local/bin:$HOME/.ghcup/bin:$HOME/.cabal/store/bin:$PATH"
+
+# Install GHC for the stack.yaml resolver.
+# RUN stack config set system-ghc --global true
+# RUN stack build --resolver=${STACK_RESOLVER} --only-dependencies --jobs=1
+
+# RUN stack build --jobs=1
 
 WORKDIR /autograder/work
