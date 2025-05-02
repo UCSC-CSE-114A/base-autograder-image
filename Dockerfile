@@ -1,5 +1,5 @@
-# We use the official edulinq python grader for Ubuntu.
-# https://github.com/edulinq/autograder-docker-python/blob/0.1.0.1/ubuntu/Dockerfile
+# We use the official edulinq python grader for Alpine.
+# https://github.com/edulinq/autograder-docker-python/blob/0.1.0.2/alpine/Dockerfile
 FROM ghcr.io/edulinq/grader.python:0.1.0.2-alpine3.20.3 AS build-stage
 
 ARG GHC_VERSION=9.4.7
@@ -9,15 +9,27 @@ ENV HOME="/root"
 
 RUN apk update
 
+# Required install packages for ghcup on Alpine
+# https://www.haskell.org/ghcup/install/#linux-alpine
 RUN apk add --no-cache \
-    build-base \
+    binutils-gold \
     curl \
-    libffi-dev \
-    libffi \
-    gmp-dev \
+    gcc \
+    g++ \
     gmp \
+    gmp-dev \
+    libc-dev \
+    libffi \
+    libffi-dev \
+    make \
+    musl \
+    musl-dev \
     ncurses \
     ncurses-dev \
+    perl \
+    tar \
+    xz \
+    zlib \
     zlib-dev
 
 WORKDIR /autograder/work
@@ -43,35 +55,35 @@ RUN cabal update
 # Remove unnecessary build artifacts.
 RUN stack purge
 RUN rm -rf \
-    /root/.stack/logs \
-    /root/.stack/build-plan \
-    /root/.stack/indices \
-    /root/.stack/pantry \
-    /root/.stack/setup-exe-cache
+    $HOME/.stack/logs \
+    $HOME/.stack/build-plan \
+    $HOME/.stack/indices \
+    $HOME/.stack/pantry \
+    $HOME/.stack/setup-exe-cache
 
 RUN rm -rf \
-    /root/.cabal/logs \
-    /root/.cabal/packages \
-    /root/.cache/cabal
+    $HOME/.cabal/logs \
+    $HOME/.cabal/packages \
+    $HOME/.cache/cabal
 
 RUN rm -rf \
-    /root/.ghcup/cache \
-    /root/.ghcup/ghc/9.4.7/share/doc \
-    /root/.ghcup/logs \
-    /root/.ghcup/tmp
+    $HOME/.ghcup/cache \
+    $HOME/.ghcup/ghc/${GHC_VERSION}/share/doc \
+    $HOME/.ghcup/logs \
+    $HOME/.ghcup/tmp
 
 FROM ghcr.io/edulinq/grader.python:0.1.0.2-alpine3.20.3 AS final-stage
 
 COPY --from=build-stage / /
 
 ENV HOME="/root"
-ENV STACK_ROOT=/root/.stack
+ENV STACK_ROOT=$HOME/.stack
 
 RUN echo "PATH=\$HOME/.local/bin:\$HOME/.ghcup/bin:\$HOME/.cabal/store/bin:\$PATH" >> $HOME/.bashrc
 ENV PATH="$HOME/.local/bin:$HOME/.ghcup/bin:$HOME/.cabal/store/bin:$PATH"
 
 WORKDIR /autograder/work
 
-# Install GHC for the stack.yaml resolver.
+# Pre-install and compile dependencies.
 RUN stack config set system-ghc --global true
 RUN stack build --only-dependencies
